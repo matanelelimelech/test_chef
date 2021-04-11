@@ -1,0 +1,31 @@
+#!/bin/bash
+apt install git -y 
+wget https://packages.chef.io/files/stable/chef-workstation/21.2.278/ubuntu/20.04/chef-workstation_21.2.278-1_amd64.deb
+dpkg -i chef-workstation_21.2.278-1_amd64.deb
+git clone https://github.com/matanelelimelech/test_chef.git ~/chef 
+cd ~/chef 
+chef-solo --chef-license accept -c ~/chef/solo.rb -j ~/chef/runlist.json
+
+
+
+chef-test
+
+
+
+
+
+package "apache2"
+
+template "/var/www/html/index.html" do
+source "index.html"
+owner "root"
+group "root"
+mode "0644"
+variables(:allow_override => "All")
+notifies :reload, "service[apache2]"
+end
+
+service "apache2" do
+action [:enable, :start]
+supports :reload => true
+end
